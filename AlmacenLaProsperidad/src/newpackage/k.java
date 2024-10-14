@@ -1,6 +1,7 @@
 package newpackage;
 
 import java.util.Scanner;
+import javax.swing.JOptionPane;
 
 public class k {
 
@@ -20,6 +21,7 @@ public class k {
             B[3][i] = B[2][i] * 6 / 5; // 20% más sobre el precio de compra
         }
     }
+
     //Método para validar el codigo de los productos
     static boolean validar_code(int x, int y, long B[][]) {
         if (!mayor_que(x)) {
@@ -77,9 +79,7 @@ public class k {
 
     // Método para realizar una venta
     static void realizarVenta(long B[][], int n) {
-        Scanner sc = new Scanner(System.in);
-        System.out.println("Ingrese el código del producto que desea comprar:");
-        int codigo = sc.nextInt();
+        int codigo = Integer.parseInt(JOptionPane.showInputDialog("Ingrese el codigo del productor que desea comprar"));
         int indexProducto = -1;
 
         // Buscar el producto por su código
@@ -91,16 +91,15 @@ public class k {
         }
 
         if (indexProducto == -1) {
-            System.out.println("Producto no encontrado.");
+            JOptionPane.showMessageDialog(null, "Producto no encontrado");
             return;
         }
 
-        System.out.println("Ingrese la cantidad que desea comprar:");
-        int cantidadCompra = sc.nextInt();
+        int cantidadCompra = Integer.parseInt(JOptionPane.showInputDialog("Ingrese la cantidad que desea comprar"));
 
         // Verificar que haya suficiente en bodega
         if (cantidadCompra > B[1][indexProducto]) {
-            System.out.println("No hay suficientes unidades en bodega.");
+            JOptionPane.showMessageDialog(null, "No hay suficientes unidades en bodega");
             return;
         }
 
@@ -111,18 +110,15 @@ public class k {
         B[1][indexProducto] -= cantidadCompra;
 
         // Solicitar ID del cliente y buscarlo
-        System.out.println("Ingrese la identificación del cliente:");
-        long idCliente = sc.nextLong();
+        long idCliente = Long.parseLong(JOptionPane.showInputDialog("Ingrese la identificacion del cliente: "));
         int indexCliente = buscarCliente(idCliente);
 
         if (indexCliente == -1) {
-            // Registrar nuevo cliente
-            System.out.println("Cliente no registrado. Se procederá a registrar.");
+            JOptionPane.showMessageDialog(null, "Cliente no registrado. Se procederá a registrar");
             registrarCliente(idCliente);
             indexCliente = buscarCliente(idCliente);
         }
 
-        // Aplicar descuento basado en el nivel del cliente
         long valorConDescuento = aplicarDescuento(valorVenta, indexCliente);
 
         // Actualizar el total de ventas
@@ -133,7 +129,8 @@ public class k {
         // Actualizar las compras acumuladas del cliente
         clientes[1][indexCliente] += valorConDescuento;
 
-        // Generar factura
+        System.out.println(generarFactura(idCliente, codigo, cantidadCompra, B[3][indexProducto], valorVenta, valorConDescuento));
+        /*
         System.out.println("Factura:");
         System.out.println("Cliente: " + idCliente);
         System.out.println("Producto: " + codigo);
@@ -142,6 +139,11 @@ public class k {
         System.out.println("Total antes del descuento: " + valorVenta);
         System.out.println("Total a pagar con descuento: " + valorConDescuento);
         System.out.println("Gracias por su compra!");
+         */
+    }
+
+    static String generarFactura(long idCliente, int codigo, int cantidadCompra, long precio, long valorVenta, long valorConDescuento) {
+        return "Factura\nCliente: " + idCliente + "\nProducto: " + codigo + "\nCantidad: " + cantidadCompra + "\nPrecio por unidad: " + precio + "\nTotal antes del descuento: " + valorVenta + "\nTotal a pagar con descuento: " + valorConDescuento + "\n Gracias por su compra!";
     }
 
     // Método para realizar una devolución
@@ -188,8 +190,9 @@ public class k {
     // Método para comprar productos a los productores
     static void comprarProductos(long B[][], int n) {
         Scanner sc = new Scanner(System.in);
-        System.out.println("Ingrese el código del producto que desea comprar del productor:");
-        int codigo = sc.nextInt();
+        System.out.println("Ingrese el código del producto que desea comprar del productor: ");
+        
+        int codigo = Integer.parseInt(JOptionPane.showInputDialog("Ingrese el código del producto que desea comprar del productor: "));
         int indexProducto = -1;
 
         // Buscar el producto por su código
@@ -199,10 +202,9 @@ public class k {
                 break;
             }
         }
-
-        System.out.println("Ingrese la cantidad que desea comprar:");
-        int cantidadCompra = sc.nextInt();
-
+        
+        int cantidadCompra = Integer.parseInt(JOptionPane.showInputDialog("Ingrese la cantidad que desea comprar"));
+        
         System.out.println("Ingrese el valor por unidad del producto:");
         long precioCompra = sc.nextLong();
 
@@ -253,8 +255,8 @@ public class k {
         int maxProductos = 100; // Máximo número de productos
         long[][] productos = new long[4][maxProductos]; // [0] -> Código, [1] -> Cantidad, [2] -> Precio de compra, [3] -> Precio de venta
         int numProductos = 0;
-
-        do {
+        boolean sw = true;
+        while (sw) {
             System.out.println("\n--- Menú Principal ---");
             System.out.println("1. Realizar una venta");
             System.out.println("2. Realizar una devolución");
@@ -279,10 +281,12 @@ public class k {
                     break;
                 case 5:
                     System.out.println("Saliendo del sistema.");
+                    sw = false;
                     break;
                 default:
                     System.out.println("Opción no válida.");
             }
-        } while (opcion != 5);
+
+        }
     }
 }
